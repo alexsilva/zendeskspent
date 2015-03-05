@@ -1,5 +1,5 @@
 django==1.7.+
 django-environ
 git+git://github.com/sshwsfc/django-xadmin.git@django1.7
-git+git@github.com:maxgutman/zendesk.git@master
+git+git://github.com/maxgutman/zendesk.git@master
 celery
