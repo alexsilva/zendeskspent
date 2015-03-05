@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'contracts',
     'xadmin',
     'crispy_forms',
+    'remotesyc'
 )
 
 MIDDLEWARE_CLASSES = (
