@@ -31,9 +31,12 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
 
+# Celery configs
+BROKER_URL = env('BROKER_URL', default='amqp://')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='amqp')
+
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
