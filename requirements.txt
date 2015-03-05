@@ -1,2 +1,3 @@
 django==1.7.+
 django-environ
+git+git://github.com/sshwsfc/django-xadmin.git@django1.7
