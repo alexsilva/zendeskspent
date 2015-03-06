@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 BROKER_URL = env('BROKER_URL', default='amqp://')
 CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='amqp')
 
+ZENDESK_BASE_URL = 'https://fabricadigital.zendesk.com'
 
 # Application definition
 INSTALLED_APPS = (
