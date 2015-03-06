@@ -37,6 +37,10 @@ CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='amqp')
 
 ZENDESK_BASE_URL = 'https://{0!s}.zendesk.com'.format(env('ZENDESK_URL_COMPANY_NAME',
                                                           default="zendesk"))
+ZENDESK_EMAIL = env('ZENDESK_EMAIL')
+ZENDESK_PASSWORD = env('ZENDESK_PASSWORD')
+ZENDESK_API_VERSION = env.int('ZENDESK_API_VERSION', default=2)
+
 
 # Application definition
 INSTALLED_APPS = (
