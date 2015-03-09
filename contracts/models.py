@@ -56,5 +56,4 @@ class Period(CommonBaseModel):
         verbose_name_plural = verbose_name + "s"
 
     def __unicode__(self):
-        print self.dt_start, self.dt_end
         return u"{0.dt_start} até {0.dt_end}".format(self)
