@@ -32,6 +32,8 @@ class Contract(CommonBaseModel):
 
     name = models.CharField(u"Título", max_length=256)
 
+    hours = models.PositiveIntegerField("Total de horas", help_text="Total de horas contratadas.")
+
     archive = models.BooleanField("Arquivar", default=False, help_text=u"Define se o contrato foi cancelado.")
 
     class Meta(object):

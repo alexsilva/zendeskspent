@@ -35,7 +35,7 @@ class PeriodInline(object):
 
 
 class ContractAdmin(object):
-    list_display = ('name', 'company', 'archive_list_display')
+    list_display = ('name', 'company', 'hours', 'archive_list_display')
 
     inlines = [PeriodInline]
 
