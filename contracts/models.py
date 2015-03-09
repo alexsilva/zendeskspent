@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.conf import settings
 from django.db import models
 
 
@@ -15,8 +16,10 @@ class Company(CommonBaseModel):
     name = models.CharField("Nome", max_length=256)
 
     view_external = models.PositiveIntegerField(u"Visualização (ID)")
-    estimated_hours_external = models.PositiveIntegerField("Horas estimadas (ID)")
-    spent_hours_external = models.PositiveIntegerField("Horas gastas (ID)")
+    estimated_hours_external = models.PositiveIntegerField("Horas estimadas (ID)",
+                                                           default=settings.COMPANY_ESTIMATED_HOURS_ID)
+    spent_hours_external = models.PositiveIntegerField("Horas gastas (ID)",
+                                                       default=settings.COMPANY_SPENT_HOURS_ID)
 
     class Meta(object):
         verbose_name = "Empresa"
