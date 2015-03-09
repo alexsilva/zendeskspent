@@ -29,11 +29,15 @@ class Ticket(BaseTicket):
 
     _fields = models.TextField("Todos os campos", null=True, default='')
 
-    created_at = models.DateTimeField("Criado em", auto_now_add=True, null=True)
-    updated_at = models.DateTimeField("Atualizado em", auto_now=True, null=True)
+    created_at = models.DateTimeField("Criado em", null=True)
+    updated_at = models.DateTimeField("Atualizado em", null=True)
 
     @property
     def fields(self):
+        return self._cache_fields()
+
+    @lru_cache(maxsize=100)
+    def _cache_fields(self):
         return pickle.loads(base64.b64decode(self._fields))
 
     @fields.setter
