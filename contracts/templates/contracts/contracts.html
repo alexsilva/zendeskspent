@@ -13,7 +13,7 @@
 
         #form-container {
             padding: 10px;
-            margin-top: 30px;
+            margin-bottom: 30px;
         }
 
         #results-container {
@@ -56,23 +56,6 @@
 
 {% block content %}
     <div>
-        {% if data %}
-            <div id="results-container" class="box-border">
-	            <table id="form_results" class="compact row-border">
-	                <thead>
-	                <tr>
-	                    <th>ID</th>
-	                    <th>Título</th>
-	                    <th>Data Inicial</th>
-	                    <th>Data Final</th>
-	                    <th>Horas gastas</th>
-	                </tr>
-	                </thead>
-	                <tbody></tbody>
-	            </table>
-            </div>
-        {% endif %}
-
         <div id="form-container" class="box-border">
             <form action="." method="post" id="form-contracts">{% csrf_token %}
                 <div id="form-container-inside">
@@ -86,5 +69,21 @@
                 </div>
             </form>
         </div>
+        {% if data %}
+        <div id="results-container" class="box-border">
+            <table id="form_results" class="compact row-border">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Data Inicial</th>
+                    <th>Data Final</th>
+                    <th>Horas gastas</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
