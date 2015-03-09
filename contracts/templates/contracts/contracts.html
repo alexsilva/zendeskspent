@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load ticket_hours %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static "datatable-1.10.5/css/jquery.dataTables.css" %}">
+    <script type="application/javascript" src="{% static "datatable-1.10.5/js/jquery.dataTables.js" %}"></script>
+
+    <style>
+        .box-border {
+			border: solid 1px;
+        }
+
+        #form-container {
+            padding: 10px;
+            margin-top: 30px;
+        }
+
+        #results-container {
+            padding: 10px;
+        }
+    </style>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $("#id_name, #id_contracts").change(function () {
+                if ($(this).val()) {
+                    $('#form-contracts').submit();
+                }
+            });
+            $('#form_results').DataTable({
+                data: [
+                    {% for key, objects in data.items %}
+                        {%  for object in objects %} {
+                            id: {{ object.pk }},
+                            title: "{{ object.subject }}",
+                            created_at: "{{ object.created_at }}",
+                            updated_at: "{{ object.updated_at }}",
+                            hours: {% load_hours object contract %}
+                            } {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+						{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+	            ],
+	            columns: [
+	                {data: 'id'},
+	                {data: 'title'},
+	                {data: 'created_at'},
+	                {data: 'updated_at'},
+	                {data: 'hours'}
+	            ]
+	        });
+        })
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    <div>
+        {% if data %}
+            <div id="results-container" class="box-border">
+	            <table id="form_results" class="row-border">
+	                <thead>
+	                <tr>
+	                    <th>ID</th>
+	                    <th>Título</th>
+	                    <th>Data Inicial</th>
+	                    <th>Data Final</th>
+	                    <th>Horas gastas</th>
+	                </tr>
+	                </thead>
+	                <tbody></tbody>
+	            </table>
+            </div>
+        {% endif %}
+
+        <div id="form-container" class="box-border">
+            <form action="." method="post" id="form-contracts">{% csrf_token %}
+                <div id="form-container-inside">
+                    {{ form.as_p }}
+                    {{ related_form.as_p }}
+                    {{ period_form.as_p }}
+                    <input type="hidden" name="form_step" value="{{ form_step }}">
+                </div>
+                <div class="form-controller">
+                    <button type="submit">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

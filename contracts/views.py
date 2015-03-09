@@ -1,13 +1,14 @@
 from django.core.context_processors import csrf
 from django.shortcuts import render
 from django.views.generic import View
+from django.core import serializers
 
 import forms
 import models
+import remotesyc.models
 
 
 class ContractView(View):
-
     def get(self, request, *args, **kwargs):
         return render(request, "contracts/contracts.html", {
             'form': forms.CompanyForm(),
@@ -37,12 +38,22 @@ class ContractView(View):
                     params['period_form'] = forms.PeriodForm(request.POST, params={
                         'period': contract.period_set,
                     })
-                    self.do_filter()
+
+                    if params['period_form'].is_valid():
+                        params['data'] = self.do_filter(contract, params['period_form'].cleaned_data['period'])
+                        params['contract'] = contract
             else:
                 params['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set
                 })
         return render(request, "contracts/contracts.html", params)
 
-    def do_filter(self):
-        pass
+    def do_filter(self, contract, periods):
+        tickets = remotesyc.models.Ticket.objects.filter(view_id=contract.company.view_external)
+        related = {}
+        for period in periods:
+            related[period] = tickets.filter(created_at__gte=period.dt_start,
+                                             created_at__lt=period.dt_end)
+        if not related:
+            related['all'] = tickets
+        return related
