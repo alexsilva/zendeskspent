@@ -3,9 +3,10 @@ from __future__ import absolute_import
 from celery import shared_task
 from django.conf import settings
 from zendesk import Zendesk
+from zendesk import ZendeskError
 
-import contracts.models
-import remotesyc.models
+from contracts.models import Company
+from remotesyc.models import Ticket
 
 __author__ = 'alex'
 
@@ -16,16 +17,21 @@ def sync_remote(*args, **kwargs):
                       settings.ZENDESK_EMAIL, settings.ZENDESK_PASSWORD,
                       api_version=settings.ZENDESK_API_VERSION)
 
-    for company in contracts.models.Company.objects.all():
+    field_names = Ticket.get_all_field_names('pk', '_fields', 'view_id')
+
+    for company in Company.objects.all():
         next_page = True
         page = 1
-
-        field_names = remotesyc.models.Ticket.get_all_field_names('pk', '_fields', 'view_id')
 
         registers = []
 
         while next_page:
-            results = zendesk.list_tickets(view_id=company.view_external, page=page)
+            try:
+                results = zendesk.list_tickets(view_id=company.view_external, page=page)
+            except ZendeskError as err:
+                # view does not exist
+                if 'error' in err.msg and err.error_code == 404:
+                    break
 
             for ticket in results['tickets']:
                 params = {
@@ -35,11 +41,11 @@ def sync_remote(*args, **kwargs):
                     params[name] = ticket[name]
                 obj = None
                 try:
-                    obj = remotesyc.models.Ticket.objects.get(pk=params['id'])
+                    obj = Ticket.objects.get(pk=params['id'])
                     for name, value in params.iteritems():  # update
                         setattr(obj, name, value)
-                except remotesyc.models.Ticket.DoesNotExist:
-                    obj = remotesyc.models.Ticket.objects.create(**params)
+                except Ticket.DoesNotExist:
+                    obj = Ticket.objects.create(**params)
                 finally:
                     obj.fields = ticket['fields']
                     obj.save()
@@ -49,6 +55,6 @@ def sync_remote(*args, **kwargs):
             page += 1
 
         # database clean
-        remotesyc.models.Ticket.objects.exclude(pk__in=registers, view_id=company.view_external).delete()
+        Ticket.objects.filter(view_id=company.view_external).exclude(pk__in=registers).delete()
 
-    return remotesyc.models.Ticket.objects.count()
+    return Ticket.objects.count()
