@@ -20,7 +20,8 @@ class CompanyAdmin(object):
     )
 
     def view_external_list_display(self, obj):
-        return '<a href="{0}/rules/{1.view_external}"># {1.view_external}</a>'.format(settings.ZENDESK_BASE_URL, obj)
+        return '<a href="{0}/rules/{1.view_external}" target="_blank"># {1.view_external}</a>'.format(
+            settings.ZENDESK_BASE_URL, obj)
 
     view_external_list_display.short_description = u'Seguir visualização'
     view_external_list_display.admin_order_field = 'view_external'
