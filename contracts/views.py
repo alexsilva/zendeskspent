@@ -1,7 +1,6 @@
 from django.core.context_processors import csrf
 from django.shortcuts import render
 from django.views.generic import View
-from django.core import serializers
 
 import forms
 import models
