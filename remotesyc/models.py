@@ -7,6 +7,28 @@ import pickle
 
 class BaseTicket(models.Model):
 
+    class STATUS(object):
+        """ All status valid """
+        ALL = '-'
+        NEW = "new"
+        OPEN = "open"
+        PENDING = "pending"
+        HOLD = "hold"
+        SOLVED = "solved"
+        CLOSED = "closed"
+        CHOICES = (
+            (ALL, "Todos"),
+            (NEW, "Novo"),
+            (OPEN, "Aberto"),
+            (PENDING, "Pendente"),
+            (HOLD, "Espera"),
+            (SOLVED, "Resolvido"),
+            (CLOSED, "Fechado")
+        )
+        @classmethod
+        def choices_as_dict(cls):
+            return dict(cls.CHOICES)
+
     @classmethod
     def get_all_field_names(cls, *excluding):
         return [name for name in cls._meta.get_all_field_names() if name not in excluding]

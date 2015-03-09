@@ -1,6 +1,6 @@
 # coding=utf-8
 from django import forms
-
+import remotesyc.models
 import models
 
 
@@ -8,6 +8,8 @@ __author__ = 'alex'
 
 
 class CompanyForm(forms.ModelForm):
+    status = forms.ChoiceField(label="Estado", choices=remotesyc.models.Ticket.STATUS.CHOICES)
+
     name = forms.ModelChoiceField(queryset=models.Company.objects.all(),
                                   empty_label='Selecione uma empresa',
                                   label='Empresas',
@@ -15,7 +17,7 @@ class CompanyForm(forms.ModelForm):
 
     class Meta:
         model = models.Company
-        fields = ('name', )
+        fields = ('status', 'name')
 
 
 class ContractForm(forms.Form):

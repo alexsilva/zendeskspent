@@ -40,7 +40,7 @@ class ContractView(View):
                     })
 
                     if params['period_form'].is_valid():
-                        params['data'] = self.do_filter(contract, params['period_form'].cleaned_data['period'])
+                        params['data'] = self.do_filter(request, contract, params['period_form'].cleaned_data['period'])
                         params['contract'] = contract
             else:
                 params['related_form'] = forms.ContractForm(params={
@@ -48,8 +48,12 @@ class ContractView(View):
                 })
         return render(request, "contracts/contracts.html", params)
 
-    def do_filter(self, contract, periods):
+    def do_filter(self, request, contract, periods):
         tickets = remotesyc.models.Ticket.objects.filter(view_id=contract.company.view_external)
+
+        if not request.POST['status'] == remotesyc.models.Ticket.STATUS.ALL:
+            tickets = tickets.filter(status=request.POST['status'])
+
         related = {}
         for period in periods:
             related[period] = tickets.filter(created_at__gte=period.dt_start,
