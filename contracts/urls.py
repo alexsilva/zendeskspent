@@ -5,5 +5,5 @@ __author__ = 'alex'
 
 
 urlpatterns = patterns('contracts.views',
-    url(r'form1/', views.ContractView.as_view(), name='form'),
+    url(r'', views.ContractView.as_view(), name='contracts-form'),
 )
