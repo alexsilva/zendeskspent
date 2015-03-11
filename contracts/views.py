@@ -55,8 +55,8 @@ class ContractView(View):
 
         related = {}
         for period in periods:
-            related[period] = tickets.filter(created_at__gte=period.dt_start,
-                                             created_at__lt=period.dt_end)
+            related[period] = tickets.filter(updated_at__gte=period.dt_start,
+                                             updated_at__lte=period.dt_end)
         if not related:
             related['all'] = tickets
         return related
