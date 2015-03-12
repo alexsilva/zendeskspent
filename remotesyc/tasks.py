@@ -27,16 +27,14 @@ def sync_remote(*args, **kwargs):
 
         while next_page:
             try:
-                results = zendesk.list_tickets(view_id=company.view_external, page=page)
+                results = zendesk.list_tickets(organization_id=company.organization_external, page=page)
             except ZendeskError as err:
                 # view does not exist
                 if 'error' in err.msg and err.error_code == 404:
                     break
 
             for ticket in results['tickets']:
-                params = {
-                    'view_id': company.view_external
-                }
+                params = {}
                 for name in field_names:
                     params[name] = ticket[name]
                 obj = None
@@ -55,6 +53,6 @@ def sync_remote(*args, **kwargs):
             page += 1
 
         # database clean
-        Ticket.objects.filter(view_id=company.view_external).exclude(pk__in=registers).delete()
+        Ticket.objects.filter(view_id=company.organization_external).exclude(pk__in=registers).delete()
 
     return Ticket.objects.count()

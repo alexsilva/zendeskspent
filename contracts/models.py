@@ -15,7 +15,7 @@ class Company(CommonBaseModel):
     """ Is the enterprise (organization) """
     name = models.CharField("Nome", max_length=256)
 
-    view_external = models.PositiveIntegerField(u"Visualização (ID)")
+    organization_external = models.PositiveIntegerField(u"Organização (ID)")
     estimated_hours_external = models.PositiveIntegerField("Horas estimadas (ID)",
                                                            default=settings.COMPANY_ESTIMATED_HOURS_ID)
     spent_hours_external = models.PositiveIntegerField("Horas gastas (ID)",

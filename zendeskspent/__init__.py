@@ -9,8 +9,8 @@ import zendesk
 
 # método da api zendesk faltando na biblioteca (zendesk)
 zendesk.mapping_table_v2['list_tickets'] = {
-    'path': '/views/{{view_id}}/tickets.json',
-    'valid_params': ('view_id',),
+    'path': '/organizations/{{organization_id}}/tickets.json',
+    'valid_params': ('organization_id',),
     'status': 200,
     'method': 'GET'
 }

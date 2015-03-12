@@ -7,25 +7,25 @@ import models
 
 
 class CompanyAdmin(object):
-    list_display = ('name', 'view_external_list_display')
+    list_display = ('name', 'organization_external_list_display')
 
     form_layout = (
         Fieldset('Dados da empresa',
                  'name',
         ),
         Fieldset('Referências (Zendesk)',
-                 Row('view_external', 'estimated_hours_external',
+                 Row('organization_external', 'estimated_hours_external',
                      'spent_hours_external')
         )
     )
 
-    def view_external_list_display(self, obj):
-        return '<a href="{0}/rules/{1.view_external}" target="_blank"># {1.view_external}</a>'.format(
+    def organization_external_list_display(self, obj):
+        return '<a href="{0}/organizations/{1.organization_external}" target="_blank"># {1.organization_external}</a>'.format(
             settings.ZENDESK_BASE_URL, obj)
 
-    view_external_list_display.short_description = u'Seguir visualização'
-    view_external_list_display.admin_order_field = 'view_external'
-    view_external_list_display.allow_tags = True
+    organization_external_list_display.short_description = u'Seguir organização'
+    organization_external_list_display.admin_order_field = 'organization_external'
+    organization_external_list_display.allow_tags = True
 
 
 class PeriodInline(object):

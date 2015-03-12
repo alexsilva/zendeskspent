@@ -47,7 +47,6 @@ class Ticket(BaseTicket):
     status = models.CharField('Estado', max_length=64)
 
     organization_id = models.PositiveIntegerField(u"Organização (ID)")
-    view_id = models.PositiveIntegerField(u"Visualização (ID)")
 
     _fields = models.TextField("Todos os campos", null=True, default='')
 
