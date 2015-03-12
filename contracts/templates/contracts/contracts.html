@@ -60,16 +60,14 @@
 
 {% block content %}
     <div>
-        <div id="form-container" class="box-border">
-            <form action="." method="post" id="form-contracts">{% csrf_token %}
-                <div id="form-container-inside">
-                    {{ form.as_p }}
-                    {{ related_form.as_p }}
-                    {{ period_form.as_p }}
+        <div id="form-container" class="container">
+            <form action="." method="post" id="form-contracts" class="form-horizontal">{% csrf_token %}
+                <div id="form-group">{{ form.as_table }}</div>
+                <div id="form-group">{{ related_form.as_table }}</div>
+                <div id="form-group">{{ period_form.as_table }}</div>
+                <div id="form-group">
+                    <button type="submit" class="btn btn-default">Enviar</button>
                     <input type="hidden" name="form_step" value="{{ form_step }}">
-                </div>
-                <div class="form-controller">
-                    <button type="submit">Enviar</button>
                 </div>
             </form>
         </div>

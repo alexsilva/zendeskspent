@@ -15,6 +15,11 @@ class CompanyForm(forms.ModelForm):
                                   label='Empresas',
                                   required=True)
 
+    def __init__(self, *args, **kwargs):
+        super(CompanyForm, self).__init__(*args, **kwargs)
+        self.fields['status'].widget.attrs['class'] = 'form-control'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = models.Company
         fields = ('status', 'name')
@@ -32,6 +37,7 @@ class ContractForm(forms.Form):
         super(ContractForm, self).__init__(*args, **kwargs)
 
         self.fields['contracts'].queryset = params.get('contracts', models.Contract.objects.none())
+        self.fields['contracts'].widget.attrs['class'] = 'form-control'
 
 
 class PeriodForm(forms.Form):
@@ -44,3 +50,4 @@ class PeriodForm(forms.Form):
         super(PeriodForm, self).__init__(*args, **kwargs)
 
         self.fields['period'].queryset = params.get('period', models.Period.objects.none())
+        self.fields['period'].widget.attrs['class'] = 'form-control'
