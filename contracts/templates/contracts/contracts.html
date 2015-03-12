@@ -49,8 +49,9 @@
     <div class="container-fluid">
         <div class="container-fluid alert alert-info">
             {% if data %}
-                <p>Total de horas: {{ contract.hours }}
-                    <span>|Horas restantes: {% calc_hours_remainder contract data %}</span>
+                <p>Total de horas do contrato: {{ contract.hours }}
+                    <span> | Horas restantes: {% calc_hours_remainder contract data %}</span>
+                    <span> | Horas gastas: {% calc_hours_spent contract data %}</span>
                 </p>
             {% endif %}
         </div>

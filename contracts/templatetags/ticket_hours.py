@@ -14,9 +14,14 @@ def load_hours(context, ticket, contract):
 @register.simple_tag(takes_context=True)
 def calc_hours_remainder(context, contract, data):
     """Total de horas restantes para todo o período"""
-    total_hours = contract.hours
+    return contract.hours - calc_hours_spent(context, contract, data)
+
+
+@register.simple_tag(takes_context=True)
+def calc_hours_spent(context, contract, data):
+    """Total de horas restantes para todo o período"""
     hours = []
     for key, objects in data.iteritems():
         hours.append(sum([(float(ticket.get_field_value(contract.company.spent_hours_external) or 0.0))
                           for ticket in objects]))
-    return total_hours - sum(hours)
+    return sum(hours)
