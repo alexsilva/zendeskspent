@@ -27,7 +27,8 @@
                             title: "{{ object.subject }}",
                             created_at: "{{ object.created_at }}",
                             updated_at: "{{ object.updated_at }}",
-                            hours: {% load_hours object contract %}
+                            hours: {% load_hours object contract %},
+                            status: "{% resolve_status object %}"
                             } {% if not forloop.last %},{% endif %}
                         {% endfor %}
                     {% endfor %}
@@ -37,7 +38,8 @@
 	                {data: 'title'},
 	                {data: 'created_at'},
 	                {data: 'updated_at'},
-	                {data: 'hours'}
+	                {data: 'hours'},
+                    {data: 'status'}
 	            ]
 	        });
         })
@@ -76,6 +78,7 @@
                     <th>Data Inicial</th>
                     <th>Data Final</th>
                     <th>Horas gastas</th>
+                    <th>Estado</th>
                 </tr>
                 </thead>
                 <tbody></tbody>

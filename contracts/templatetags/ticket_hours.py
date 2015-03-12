@@ -1,5 +1,6 @@
 # coding=utf-8
 from django import template
+from remotesyc.models import Ticket
 
 register = template.Library()
 __author__ = 'alex'
@@ -25,3 +26,8 @@ def calc_hours_spent(context, contract, data):
         hours.append(sum([(float(ticket.get_field_value(contract.company.spent_hours_external) or 0.0))
                           for ticket in objects]))
     return sum(hours)
+
+
+@register.simple_tag(takes_context=True)
+def resolve_status(context, ticket):
+    return Ticket.STATUS.choices_as_dict()[ticket.status]
