@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "dataTables-1.10.5/css/bootstrap.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "dataTables-1.10.5/css/dataTables.bootstrap.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "contracts/css/bpopup_overlay.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "contracts/css/styles.css" %}">
 
     <script type="text/javascript" language="javascript" src="{% static "dataTables-1.10.5/js/jquery.dataTables.min.js" %}"></script>
     <script type="text/javascript" language="javascript" src="{% static "dataTables-1.10.5/js/dataTables.bootstrap.js" %}"></script>
@@ -15,8 +16,6 @@
     <script type="application/javascript">var REMOTE_SYNC_URL = "{% url 'remotesync' %}"</script>
     <script type="text/javascript" language="javascript" src="{% static "contracts/js/sync_controller.js" %}"></script>
 
-    <style>
-    </style>
     <script type="application/javascript">
         $(document).ready(function () {
             $("#id_name, #id_contracts").change(function () {
@@ -56,10 +55,11 @@
     <div class="container-fluid">
         <div class="container-fluid alert alert-info">
             {% if data %}
-                <p>Total de horas do contrato: {{ contract.hours }}
-                    <span> | Horas restantes: {% calc_hours_remainder contract data %}</span>
-                    <span> | Horas gastas: {% calc_hours_spent contract data %}</span>
-                    <button style="float: right" id="btn_show_sync">Sincronizar dados</button>
+                <p>
+                    <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
+                    <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
+                    <span class="text-success"> | Horas gastas: {% calc_hours_spent contract data %}</span>
+                    <button id="btn_show_sync" class="btn btn-default">Sincronizar dados</button>
                 </p>
                 <div id="sync_box"> <a class="sync_box_btn_close">X</a>
                     <div id="sync_box_info" class="alert alert-warning">
