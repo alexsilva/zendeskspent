@@ -23,7 +23,7 @@ class CompanyAdmin(object):
         return '<a href="{0}/organizations/{1.organization_external}" target="_blank"># {1.organization_external}</a>'.format(
             settings.ZENDESK_BASE_URL, obj)
 
-    organization_external_list_display.short_description = u'Seguir organização'
+    organization_external_list_display.short_description = u'Visualizar organização'
     organization_external_list_display.admin_order_field = 'organization_external'
     organization_external_list_display.allow_tags = True
 
