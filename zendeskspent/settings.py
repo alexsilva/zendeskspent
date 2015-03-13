@@ -54,7 +54,8 @@ INSTALLED_APPS = (
     'contracts',
     'xadmin',
     'crispy_forms',
-    'remotesyc'
+    'remotesyc',
+    'django_js_reverse'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,6 +92,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+# up root
+STATIC_ROOT = os.path.dirname(BASE_DIR)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

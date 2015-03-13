@@ -8,7 +8,7 @@ def sync(request):
         'status': True
     }
     try:
-        params['sync_total'] = tasks.sync_remote()
+        params['total'] = tasks.sync_remote()
     except Exception as e:
         params['status'] = False
         params['error'] = str(e)

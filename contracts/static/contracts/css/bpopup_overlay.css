@@ -1,0 +1,16 @@
+#sync_box {
+    background-color: #fff;
+    border-radius: 15px;
+    color: #000;
+    display: none;
+    padding: 50px;
+    min-width: 800px;
+    min-height: 150px;
+}
+
+.sync_box_btn_close {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}

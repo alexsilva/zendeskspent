@@ -3,12 +3,17 @@
 {% load ticket_tags %}
 
 {% block extrahead %}
-
+    <link rel="stylesheet" type="text/css" href="{% static "contracts/css/isloading_overlay.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "dataTables-1.10.5/css/bootstrap.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "dataTables-1.10.5/css/dataTables.bootstrap.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "contracts/css/bpopup_overlay.css" %}">
 
     <script type="text/javascript" language="javascript" src="{% static "dataTables-1.10.5/js/jquery.dataTables.min.js" %}"></script>
     <script type="text/javascript" language="javascript" src="{% static "dataTables-1.10.5/js/dataTables.bootstrap.js" %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static "contracts/js/jquery.bpopup.min.js" %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static "contracts/js/jquery.isloading.min.js" %}"></script>
+    <script type="application/javascript">var REMOTE_SYNC_URL = "{% url 'remotesync' %}"</script>
+    <script type="text/javascript" language="javascript" src="{% static "contracts/js/sync_controller.js" %}"></script>
 
     <style>
     </style>
@@ -54,9 +59,20 @@
                 <p>Total de horas do contrato: {{ contract.hours }}
                     <span> | Horas restantes: {% calc_hours_remainder contract data %}</span>
                     <span> | Horas gastas: {% calc_hours_spent contract data %}</span>
+                    <button style="float: right" id="btn_show_sync">Sincronizar dados</button>
                 </p>
+                <div id="sync_box"> <a class="sync_box_btn_close">X</a>
+                    <div id="sync_box_info" class="alert alert-warning">
+                        <p>Dados sincronizados com <span id="sync_box_state"></span></p>
+                        <p>Total de tickets carregados: <span id="sync_box_total"></span></p>
+                    </div>
+                    <div id="sync_box_error" class="alert alert-danger">
+                        <p>Messagem do servidor: <span class="text-warning" id="sync_box_error_message"></span></p>
+                    </div>
+                </div>
             {% endif %}
         </div>
+
         <div id="form-container" class="container">
             <form action="." method="post" id="form-contracts" class="form-horizontal">{% csrf_token %}
                 <div class="form-group ">{{ form.as_table }}</div>
