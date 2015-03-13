@@ -18,7 +18,7 @@ def sync_remote(*args, **kwargs):
                       api_version=settings.ZENDESK_API_VERSION)
 
     field_names = Ticket.get_all_field_names('pk', '_fields')
-    queryfmt = 'type:ticket+organization_id:{0.organization_external}'
+    queryfmt = 'type:ticket organization_id:{0.organization_external}'
 
     for company in Company.objects.all():
         next_page = True
