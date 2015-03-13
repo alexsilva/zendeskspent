@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% load ticket_hours %}
+{% load ticket_tags %}
 
 {% block extrahead %}
 
@@ -23,7 +23,7 @@
                 data: [
                     {% for key, objects in data.items %}
                         {%  for object in objects %} {
-                            id: {{ object.pk }},
+                            id: "<a href='{{ object|resolve_id_url }}' target='_blank'>#{{ object.pk }}</a>",
                             title: "{{ object.subject }}",
                             created_at: "{{ object.created_at }}",
                             updated_at: "{{ object.updated_at }}",
