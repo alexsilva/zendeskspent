@@ -17,7 +17,7 @@ def sync_remote(*args, **kwargs):
                       settings.ZENDESK_EMAIL, settings.ZENDESK_PASSWORD,
                       api_version=settings.ZENDESK_API_VERSION)
 
-    field_names = Ticket.get_all_field_names('pk', '_fields', 'view_id')
+    field_names = Ticket.get_all_field_names('pk', '_fields')
 
     for company in Company.objects.all():
         next_page = True
@@ -53,6 +53,6 @@ def sync_remote(*args, **kwargs):
             page += 1
 
         # database clean
-        Ticket.objects.filter(view_id=company.organization_external).exclude(pk__in=registers).delete()
+        Ticket.objects.filter(organization_id=company.organization_external).exclude(pk__in=registers).delete()
 
     return Ticket.objects.count()
