@@ -48,7 +48,7 @@ class ContractView(View):
         return render(request, "contracts/contracts.html", params)
 
     def do_filter(self, request, contract, periods):
-        tickets = remotesyc.models.Ticket.objects.filter(view_id=contract.company.organization_external)
+        tickets = remotesyc.models.Ticket.objects.filter(organization_id=contract.company.organization_external)
 
         if not request.POST['status'] == remotesyc.models.Ticket.STATUS.ALL:
             tickets = tickets.filter(status=request.POST['status'])
