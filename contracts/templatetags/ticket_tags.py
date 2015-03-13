@@ -3,14 +3,16 @@ from django import template
 from django.conf import settings
 
 from remotesyc.models import Ticket
+from contracts import utils
 
 register = template.Library()
+
 __author__ = 'alex'
 
 
 @register.simple_tag(takes_context=True)
 def load_hours(context, ticket, contract):
-    return ticket.get_field_value(contract.company.spent_hours_external) or 0.0
+    return utils.float_number(ticket.get_field_value(contract.company.spent_hours_external))
 
 
 @register.simple_tag(takes_context=True)
@@ -24,7 +26,7 @@ def calc_hours_spent(context, contract, data):
     """Total de horas restantes para todo o período"""
     hours = []
     for key, objects in data.iteritems():
-        hours.append(sum([(float(ticket.get_field_value(contract.company.spent_hours_external) or 0.0))
+        hours.append(sum([(utils.float_number(ticket.get_field_value(contract.company.spent_hours_external)))
                           for ticket in objects]))
     return sum(hours)
 
