@@ -7,6 +7,7 @@ import forms
 import models
 import remotesyc.models
 import utils
+import copy
 
 
 class ContractView(View):
@@ -17,13 +18,20 @@ class ContractView(View):
             'form_step': 1
         })
 
+    @staticmethod
+    def post_changed(request):
+        _post = copy.deepcopy(request.POST)
+        if 'status' not in _post:  # Force default
+            _post['status'] = remotesyc.models.Ticket.STATUS.CLOSED
+        return _post
+
+    # noinspection DjangoOrm
     def post(self, request, *args, **kwargs):
         context = {
-            'form': forms.CompanyForm(request.POST),
+            'form': forms.CompanyForm(self.post_changed(request)),
             'form_step': 1
         }
         context.update(csrf(request))
-
         if context['form'].is_valid():
             company = models.Company.objects.get(pk=request.POST['name'])
 
