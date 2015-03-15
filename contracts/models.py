@@ -57,6 +57,7 @@ class Period(CommonBaseModel):
     class Meta(object):
         verbose_name = "Data"
         verbose_name_plural = verbose_name + "s"
+        ordering = ('dt_start',)
 
     def __unicode__(self):
         return u"{0.dt_start} até {0.dt_end}".format(self)

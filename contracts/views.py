@@ -8,6 +8,7 @@ import remotesyc.models
 
 
 class ContractView(View):
+
     def get(self, request, *args, **kwargs):
         return render(request, "contracts/contracts.html", {
             'form': forms.CompanyForm(),
@@ -54,9 +55,8 @@ class ContractView(View):
             tickets = tickets.filter(status=request.POST['status'])
 
         related = {}
+        periods = periods if len(periods) > 0 else contract.period_set.all()
+
         for period in periods:
-            related[period] = tickets.filter(updated_at__gte=period.dt_start,
-                                             updated_at__lte=period.dt_end)
-        if not related:
-            related['all'] = tickets
+            related[period] = tickets.filter(updated_at__range=[period.dt_start, period.dt_end])
         return related

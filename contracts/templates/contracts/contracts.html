@@ -24,20 +24,22 @@
             });
             $('#form_results').DataTable({
                 data: [
-                    {% for key, objects in data.items %}
+                    {% for date, objects in data.items %}
                         {%  for object in objects %} {
                             id: "<a href='{{ object|resolve_id_url }}' target='_blank'>#{{ object.pk }}</a>",
+                            date: "{{ date }}",
                             title: "{{ object.subject }}",
                             created_at: "{{ object.created_at }}",
                             updated_at: "{{ object.updated_at }}",
-                            hours: {% load_hours object contract %},
+                            hours: "{% load_hours object contract %}",
                             status: "{% resolve_status object %}"
-                            } {% if not forloop.last %},{% endif %}
+                            },
                         {% endfor %}
                     {% endfor %}
 	            ],
 	            columns: [
 	                {data: 'id'},
+                    {data: 'date'},
 	                {data: 'title'},
 	                {data: 'created_at'},
 	                {data: 'updated_at'},
@@ -107,6 +109,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Datas</th>
                     <th>Título</th>
                     <th>Data Inicial</th>
                     <th>Data Final</th>
