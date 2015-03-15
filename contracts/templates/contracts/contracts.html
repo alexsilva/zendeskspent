@@ -62,7 +62,9 @@
                     <span class="text-success"><span class="text-divider">|</span>Média por período: {{ contract.average_hours }}</span>
                 {% endifequal %}
                 <span class="text-warning"><span class="text-divider">|</span>Horas gastas: {{ spent_hours }}</span>
-                <span class="text-danger"><span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}</span>
+                <span class="text-{% if remainder_hours > 0 %}success{% else %}danger{% endif %}">
+                    <span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}
+                </span>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">
@@ -124,14 +126,26 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ contract.hours }}</td>
+                                <td><strong>{{ contract.hours }}</strong></td>
                                 {% ifequal intervals|length 1 %}
-                                    <td>{{ contract.average_hours }}</td>
-                                    <td>{{ spent_credits }}</td>
-                                    <td>{{ valid_hours }}</td>
+                                    <td><strong>{{ contract.average_hours }}</strong></td>
+                                    <td>
+                                        <strong class="text-{% if spent_credits >= 0 %}success{% else %}danger{% endif %}">
+                                            {{ spent_credits }}
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <strong class="text-{% if valid_hours > 0 %}success{% else %}danger{% endif %}">
+                                            {{ valid_hours }}
+                                        </strong>
+                                    </td>
                                 {% endifequal %}
-                                <td>{{ spent_hours }}</td>
-                                <td>{{ remainder_hours }}</td>
+                                <td><strong>{{ spent_hours }}</strong></td>
+                                <td>
+                                    <strong class="text-{% if remainder_hours > 0 %}success{% else %}danger{% endif %}">
+                                        {{ remainder_hours }}
+                                    </strong>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
