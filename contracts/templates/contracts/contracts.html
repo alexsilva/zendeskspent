@@ -55,7 +55,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="container-fluid alert alert-info">
-            <button id="btn_show_sync" class="btn btn-primary">Sincronizar dados</button>
+            <button id="btn_show_sync" class="btn btn-primary btn-sm">Sincronizar dados</button>
             {% if data %}
                 <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
                 <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
