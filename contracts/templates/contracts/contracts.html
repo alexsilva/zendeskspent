@@ -54,10 +54,10 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="container-fluid alert alert-info">
-            <button id="btn_show_sync" class="btn btn-primary btn-sm">Sincronizar dados</button>
+        <div class="container-fluid alert alert-success row">
+            <button id="btn_show_sync" class="btn btn-primary btn-sm action-controller">Sincronizar dados</button>
             {% if intervals %}
-                <span class="text-info">Total de horas: {{ contract.hours }}</span>
+                <span class="text-info static-inf">Total de horas: {{ contract.hours }}</span>
                 {% ifequal intervals|length 1 %} {# hora média do perído(único) selecionado. #}
                     <span class="text-success"><span class="text-divider">|</span>Média por período: {{ contract.average_hours }}</span>
                 {% endifequal %}
@@ -65,6 +65,10 @@
                 <span class="text-{% if remainder_hours > 0 %}success{% else %}danger{% endif %}">
                     <span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}
                 </span>
+                <form method="post" class="action-controller">{% csrf_token %}
+                    <button id="btn_export_csv" class="btn btn-ctr btn-success btn-sm">Exportar csv</button>
+                    <input type="hidden" name="_export" value="csv">
+                </form>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">

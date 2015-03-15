@@ -1,3 +1,6 @@
+.static-inf {
+    margin-left: 10px;
+}
 
 .table-container {
     margin: 10px;
@@ -7,10 +10,11 @@
     width: auto;
 }
 
-button#btn_show_sync {
-    margin-right: 10px;
-}
-
 span.text-divider{
     margin: 5px;
+}
+
+.action-controller {
+    margin-right: 10px;
+    float: right;
 }
