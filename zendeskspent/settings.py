@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for zendeskspent project.
 
@@ -43,6 +44,8 @@ ZENDESK_API_VERSION = env.int('ZENDESK_API_VERSION', default=2)
 
 COMPANY_ESTIMATED_HOURS_ID = env.int('COMPANY_ESTIMATED_HOURS_ID', default=0)
 COMPANY_SPENT_HOURS_ID = env.int('COMPANY_SPENT_HOURS_ID', default=0)
+
+EXPORT_CSV_COLUMNS = ('Título', 'Criando em', 'Atualizado em', 'Horas gastas', 'Horas estimadas')
 
 # Application definition
 INSTALLED_APPS = (

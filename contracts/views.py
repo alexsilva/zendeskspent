@@ -1,14 +1,19 @@
 # coding=utf-8
+from django.conf import settings
+
 from django.core.context_processors import csrf
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
+import datetime
 
 import forms
 import models
 import remotesyc.models
 import utils
 import copy
+import csv
+import StringIO
 
 
 class ContractView(View):
@@ -28,8 +33,31 @@ class ContractView(View):
 
     @staticmethod
     def export_as(request, context, subtype):
-        response = HttpResponse('OK', content_type='text/' + subtype)
-        response['Content-Disposition'] = 'attachment; filename="{0}"'.format('file.' + subtype)
+        def resolve_spent_hours(obj):
+            return utils.float_number(obj.get_field_value(context['contract'].company.spent_hours_external))
+
+        def resolve_estimated_hours(obj):
+            return utils.float_number(obj.get_field_value(context['contract'].company.estimated_hours_external))
+
+        stream = StringIO.StringIO()
+        csv_writer = csv.writer(stream)
+        csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
+        names = ['subject', 'created_at', 'updated_at', 'resolve_spent_hours', 'resolve_estimated_hours']
+        rows = []
+        for queryset in context['intervals'].values():
+            for item in queryset:
+                row = []
+                for name in names:
+                    if hasattr(item, name):
+                        row.append(getattr(item, name))
+                    else:
+                        row.append(locals()[name](item))
+                rows.append(row)
+        csv_writer.writerows(rows)
+
+        response = HttpResponse(stream.getvalue(), content_type='text/' + subtype)
+        filename = "{0:s}[{1!s}].{2:s}".format(context['contract'].company, datetime.date.today(), subtype)
+        response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(filename)
         return response
 
     # noinspection DjangoOrm
