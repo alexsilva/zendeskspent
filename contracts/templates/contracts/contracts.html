@@ -31,7 +31,7 @@
                             title: "{{ object.subject }}",
                             created_at: "{{ object.created_at }}",
                             updated_at: "{{ object.updated_at }}",
-                            hours: "{% load_hours object contract %}",
+                            hours: "{% load_spent_hours contract object %}",
                             status: "{% resolve_status object %}"
                             },
                         {% endfor %}

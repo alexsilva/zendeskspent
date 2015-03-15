@@ -18,6 +18,14 @@ def float_number(value):
     return converted
 
 
+def load_spent_hours(contract, obj):
+    return float_number(obj.get_field_value(contract.company.spent_hours_external))
+
+
+def load_estimated_hours(contract, obj):
+    return float_number(obj.get_field_value(contract.company.estimated_hours_external))
+
+
 def calc_spent_hours(contract, querysets):
     """Total de horas restantes para todo o período"""
     hours = []

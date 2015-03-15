@@ -33,16 +33,10 @@ class ContractView(View):
 
     @staticmethod
     def export_as(request, context, subtype):
-        def resolve_spent_hours(obj):
-            return utils.float_number(obj.get_field_value(context['contract'].company.spent_hours_external))
-
-        def resolve_estimated_hours(obj):
-            return utils.float_number(obj.get_field_value(context['contract'].company.estimated_hours_external))
-
         stream = StringIO.StringIO()
         csv_writer = csv.writer(stream)
         csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
-        names = ['subject', 'created_at', 'updated_at', 'resolve_spent_hours', 'resolve_estimated_hours']
+        names = ['subject', 'created_at', 'updated_at', 'load_spent_hours', 'load_estimated_hours']
         rows = []
         for queryset in context['intervals'].values():
             for item in queryset:
@@ -51,7 +45,7 @@ class ContractView(View):
                     if hasattr(item, name):
                         row.append(getattr(item, name))
                     else:
-                        row.append(locals()[name](item))
+                        row.append(getattr(utils, name)(context['contract'], item))
                 rows.append(row)
         csv_writer.writerows(rows)
 

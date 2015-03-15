@@ -12,8 +12,13 @@ __author__ = 'alex'
 
 
 @register.simple_tag(takes_context=True)
-def load_hours(context, ticket, contract):
-    return utils.float_number(ticket.get_field_value(contract.company.spent_hours_external))
+def load_spent_hours(context, contract, obj):
+    return utils.load_spent_hours(contract, obj)
+
+
+@register.simple_tag(takes_context=True)
+def load_estimated_hours(context, contract, obj):
+    return utils.load_estimated_hours(contract, obj)
 
 
 @register.simple_tag(takes_context=True)
