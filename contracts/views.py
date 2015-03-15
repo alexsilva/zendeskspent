@@ -77,7 +77,7 @@ class ContractView(View):
         extra_context['spent_hours'] = utils.calc_spent_hours(contract, extra_context['intervals'].values())
 
         if len(periods) == 1:
-            spent_credits = utils.calc_spent_credits(contract, periods[0])
+            spent_credits = utils.calc_spent_credits(contract, periods[0], request.POST['status'])
 
             # total de horas válidas
             extra_context['valid_hours'] = contract.average_hours + spent_credits

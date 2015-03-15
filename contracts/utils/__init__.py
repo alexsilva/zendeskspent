@@ -32,13 +32,14 @@ def calc_remainder_hours(contract, spent_hours):
     return contract.hours - spent_hours
 
 
-def calc_spent_credits(contract, period):
+def calc_spent_credits(contract, period, status=remotesyc.models.Ticket.STATUS.CLOSED):
     """Saldo de horas considerando o consumo dos meses anteriores ao período passado"""
     intervals = models.Period.objects.filter(contract=contract, dt_start__lt=period.dt_start)
     querysets = []
     for interval in intervals:
         querysets.append(remotesyc.models.Ticket.objects.filter(
             organization_id=contract.company.organization_external,
-            updated_at__range=[interval.dt_start, interval.dt_end]
+            updated_at__range=[interval.dt_start, interval.dt_end],
+            status=status
         ))
     return (contract.average_hours * intervals.count()) - calc_spent_hours(contract, querysets)
