@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.conf import settings
 from django.db import models
+from django.utils import dateformat
 
 
 class CommonBaseModel(models.Model):
@@ -68,4 +69,5 @@ class Period(CommonBaseModel):
         ordering = ('dt_start',)
 
     def __unicode__(self):
-        return u"{0.dt_start} até {0.dt_end}".format(self)
+        return u"{0:s} até {1:s}".format(dateformat.format(self.dt_start, settings.DATE_FORMAT),
+                                         dateformat.format(self.dt_end, settings.DATE_FORMAT))
