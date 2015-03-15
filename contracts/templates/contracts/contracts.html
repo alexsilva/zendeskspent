@@ -94,7 +94,7 @@
                         <label for="{{ period_form.period.auto_id }}" class="control-label">{{ period_form.period.label }}</label>
                         {{ period_form.period.errors }}
                         {{ period_form.period }}
-                        {{ period_form.period.help_text }}
+                        <span class="help-block">{{ period_form.period.help_text }}</span>
                     </div>
                 {% endifequal %}
                 <div class="form-group">
