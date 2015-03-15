@@ -39,6 +39,10 @@ class Contract(CommonBaseModel):
 
     archive = models.BooleanField("Arquivar", default=False, help_text=u"Define se o contrato foi cancelado.")
 
+    @property
+    def average_hours(self):
+        return self.hours / self.period_set.count()
+
     class Meta(object):
         verbose_name = "Contrato"
         verbose_name_plural = verbose_name + "s"

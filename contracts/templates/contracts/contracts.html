@@ -57,9 +57,13 @@
         <div class="container-fluid alert alert-info">
             <button id="btn_show_sync" class="btn btn-primary btn-sm">Sincronizar dados</button>
             {% if data %}
-                <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
+                <span class="text-info">Total de horas: {{ contract.hours }}</span>
+                {% ifequal data|length 1 %}
+                    {# hora média do perído(único) selecionado. #}
+                    <span class="text-success"> | Horas do período: {{ contract.average_hours }}</span>
+                {% endifequal %}
+                <span class="text-warning"> | Horas gastas: {% calc_hours_spent contract data %}</span>
                 <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
-                <span class="text-success"> | Horas gastas: {% calc_hours_spent contract data %}</span>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">

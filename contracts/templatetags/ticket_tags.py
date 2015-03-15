@@ -18,7 +18,12 @@ def load_hours(context, ticket, contract):
 @register.simple_tag(takes_context=True)
 def calc_hours_remainder(context, contract, data):
     """Total de horas restantes para todo o período"""
-    return contract.hours - calc_hours_spent(context, contract, data)
+    spent = calc_hours_spent(context, contract, data)
+    if len(data) > 1:
+        remainder = contract.hours - spent
+    else:
+        remainder = contract.average_hours - spent
+    return remainder
 
 
 @register.simple_tag(takes_context=True)
