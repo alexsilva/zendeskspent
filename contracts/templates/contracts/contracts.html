@@ -54,13 +54,12 @@
 {% block content %}
     <div class="container-fluid">
         <div class="container-fluid alert alert-info">
+            <button id="btn_show_sync" class="btn btn-default">Sincronizar dados</button>
             {% if data %}
-                <p>
-                    <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
-                    <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
-                    <span class="text-success"> | Horas gastas: {% calc_hours_spent contract data %}</span>
-                    <button id="btn_show_sync" class="btn btn-default">Sincronizar dados</button>
-                </p>
+                <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
+                <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
+                <span class="text-success"> | Horas gastas: {% calc_hours_spent contract data %}</span>
+
                 <div id="sync_box"> <a class="sync_box_btn_close">X</a>
                     <div id="sync_box_info" class="alert alert-warning">
                         <p>Dados sincronizados com <span id="sync_box_state"></span></p>
