@@ -76,36 +76,49 @@
             </div>
         </div>
 
-        <div id="form-container" class="container">
-            <form action="." method="post" id="form-contracts">{% csrf_token %}
-                <div class="form-group {% if form.name.errors %}has-error{% endif %}">
-                    <label for="{{ form.name.auto_id }}" class="control-label">{{ form.name.label }}</label>
-                    {{ form.name.errors }}
-                    {{ form.name }}
-                </div>
-                {% ifequal form_step 2 %}
-                    <div class="form-group {% if related_form.contracts.errors %}has-error{% endif %}">
-                        <label for="{{ related_form.contracts.auto_id }}" class="control-label">{{ related_form.contracts.label }}</label>
-                        {{ related_form.contracts.errors }}
-                        {{ related_form.contracts }}
+        <div id="form-container" class="container-fluid row">
+            <div class="container-fluid col-md-4 col-md-offset-1">
+                <form action="." method="post" id="form-contracts">{% csrf_token %}
+                    <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+                        <label for="{{ form.name.auto_id }}" class="control-label">{{ form.name.label }}</label>
+                        {{ form.name.errors }}
+                        {{ form.name }}
                     </div>
-                    <div class="form-group {% if form.status.errors %}has-error{% endif %}">
-                        <label for="{{ form.status.auto_id }}" class="control-label">{{ form.status.label }}</label>
-                        {{ form.status.errors }}
-                        {{ form.status }}
+                    {% ifequal form_step 2 %}
+                        <div class="form-group {% if related_form.contracts.errors %}has-error{% endif %}">
+                            <label for="{{ related_form.contracts.auto_id }}" class="control-label">{{ related_form.contracts.label }}</label>
+                            {{ related_form.contracts.errors }}
+                            {{ related_form.contracts }}
+                        </div>
+                        <div class="form-group {% if form.status.errors %}has-error{% endif %}">
+                            <label for="{{ form.status.auto_id }}" class="control-label">{{ form.status.label }}</label>
+                            {{ form.status.errors }}
+                            {{ form.status }}
+                        </div>
+                        <div class="form-group {% if period_form.period.errors %}has-error{% endif %}">
+                            <label for="{{ period_form.period.auto_id }}" class="control-label">{{ period_form.period.label }}</label>
+                            {{ period_form.period.errors }}
+                            {{ period_form.period }}
+                            <span class="help-block">{{ period_form.period.help_text }}</span>
+                        </div>
+                    {% endifequal %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">Enviar</button>
+                        <input type="hidden" name="form_step" value="{{ form_step }}">
                     </div>
-                    <div class="form-group {% if period_form.period.errors %}has-error{% endif %}">
-                        <label for="{{ period_form.period.auto_id }}" class="control-label">{{ period_form.period.label }}</label>
-                        {{ period_form.period.errors }}
-                        {{ period_form.period }}
-                        <span class="help-block">{{ period_form.period.help_text }}</span>
-                    </div>
-                {% endifequal %}
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default">Enviar</button>
-                    <input type="hidden" name="form_step" value="{{ form_step }}">
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="col-md-5 col-sm-offset-1">
+                {% if data %}
+                    <h4 class="text-info">Total de horas: {{ contract.hours }}</h4>
+                    {% ifequal data|length 1 %}
+                        {# hora média do perído(único) selecionado. #}
+                        <h4 class="text-success">Horas do período: {{ contract.average_hours }}</h4>
+                    {% endifequal %}
+                    <h4 class="text-warning">Horas gastas: {% calc_hours_spent contract data %}</h4>
+                    <h4 class="text-danger">Horas restantes: {% calc_hours_remainder contract data %}</h4>
+                {% endif %}
+            </div>
         </div>
         {% if data %}
         <div id="results-container" class="container-fluid">
