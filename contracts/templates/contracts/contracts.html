@@ -59,17 +59,16 @@
                 <span class="text-info">Total de horas do contrato: {{ contract.hours }}</span>
                 <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
                 <span class="text-success"> | Horas gastas: {% calc_hours_spent contract data %}</span>
-
-                <div id="sync_box"> <a class="sync_box_btn_close">X</a>
-                    <div id="sync_box_info" class="alert alert-warning">
-                        <p>Dados sincronizados com <span id="sync_box_state"></span></p>
-                        <p>Total de tickets carregados: <span id="sync_box_total"></span></p>
-                    </div>
-                    <div id="sync_box_error" class="alert alert-danger">
-                        <p>Messagem do servidor: <span class="text-warning" id="sync_box_error_message"></span></p>
-                    </div>
-                </div>
             {% endif %}
+            <div id="sync_box"> <a class="sync_box_btn_close">X</a>
+                <div id="sync_box_info" class="alert alert-warning">
+                    <p>Dados sincronizados com <span id="sync_box_state"></span></p>
+                    <p>Total de tickets carregados: <span id="sync_box_total"></span></p>
+                </div>
+                <div id="sync_box_error" class="alert alert-danger">
+                    <p>Messagem do servidor: <span class="text-warning" id="sync_box_error_message"></span></p>
+                </div>
+            </div>
         </div>
 
         <div id="form-container" class="container">
