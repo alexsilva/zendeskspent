@@ -18,7 +18,7 @@ def load_hours(context, ticket, contract):
 
 @register.simple_tag(takes_context=True)
 def resolve_status(context, ticket):
-    return Ticket.STATUS.choices_as_dict()[ticket.status]
+    return Ticket.STATUS.choices()[ticket.status]
 
 
 @register.filter()

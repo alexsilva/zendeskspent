@@ -26,7 +26,8 @@ class BaseTicket(models.Model):
             (CLOSED, "Fechado")
         )
         @classmethod
-        def choices_as_dict(cls):
+        def choices(cls):
+            """ :return choices as dict type """
             return dict(cls.CHOICES)
 
     @classmethod
