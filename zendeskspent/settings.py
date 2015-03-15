@@ -84,6 +84,8 @@ DATABASES = {
 
 LANGUAGE_CODE = env('LANGUAGE_CODE', default='en-us')
 
+DATETIME_FORMAT = env('DATETIME_FORMAT', default="d/m/Y H:i:s")
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
