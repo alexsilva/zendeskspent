@@ -16,37 +16,37 @@ class ContractView(View):
         })
 
     def post(self, request, *args, **kwargs):
-        params = {
+        context = {
             'form': forms.CompanyForm(request.POST),
             'form_step': 1
         }
-        params.update(csrf(request))
+        context.update(csrf(request))
 
-        if params['form'].is_valid():
+        if context['form'].is_valid():
             company = models.Company.objects.get(pk=request.POST['name'])
 
-            params['form_step'] = 2
+            context['form_step'] = 2
 
-            if int(request.POST['form_step']) == params['form_step']:
-                params['related_form'] = forms.ContractForm(request.POST, params={
+            if int(request.POST['form_step']) == context['form_step']:
+                context['related_form'] = forms.ContractForm(request.POST, params={
                     'contracts': company.contract_set
                 })
 
-                if params['related_form'].is_valid():
+                if context['related_form'].is_valid():
                     contract = models.Contract.objects.get(pk=request.POST['contracts'])
 
-                    params['period_form'] = forms.PeriodForm(request.POST, params={
+                    context['period_form'] = forms.PeriodForm(request.POST, params={
                         'period': contract.period_set,
                     })
 
-                    if params['period_form'].is_valid():
-                        params['data'] = self.do_filter(request, contract, params['period_form'].cleaned_data['period'])
-                        params['contract'] = contract
+                    if context['period_form'].is_valid():
+                        context['data'] = self.do_filter(request, contract, context['period_form'].cleaned_data['period'])
+                        context['contract'] = contract
             else:
-                params['related_form'] = forms.ContractForm(params={
+                context['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set
                 })
-        return render(request, "contracts/contracts.html", params)
+        return render(request, "contracts/contracts.html", context)
 
     def do_filter(self, request, contract, periods):
         tickets = remotesyc.models.Ticket.objects.filter(organization_id=contract.company.organization_external)
