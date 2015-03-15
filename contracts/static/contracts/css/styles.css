@@ -1,4 +1,8 @@
 
 .table-container {
-    padding: 10px;
+    margin: 10px;
+}
+
+#form_results_filter input {
+    width: auto;
 }
