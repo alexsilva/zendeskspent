@@ -87,7 +87,7 @@ class ContractView(View):
                     if context['period_form'].is_valid():
                         periods = context['period_form'].cleaned_data['period']
                         periods = periods if len(periods) > 0 else contract.period_set.all()
-                        context.update(self.make_context(request, contract, periods))
+                        context.update(self.extra_context(request, contract, periods))
             else:
                 context['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set.filter(archive=False)
@@ -99,7 +99,7 @@ class ContractView(View):
         return render(request, "contracts/contracts.html", context)
 
     @staticmethod
-    def make_context(request, contract, periods):
+    def extra_context(request, contract, periods):
         tickets = remotesyc.models.Ticket.objects.filter(organization_id=contract.company.organization_external)
 
         if not request.POST['status'] == remotesyc.models.Ticket.STATUS.ALL:
