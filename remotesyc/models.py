@@ -73,3 +73,6 @@ class Ticket(BaseTicket):
             if str(items['id']) == str(search_id):
                 return items['value']
         raise KeyError('Field id={0!s} not found!'.format(search_id))
+
+    def __unicode__(self):
+        return self.url
