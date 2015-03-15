@@ -31,7 +31,7 @@ class ContractView(View):
 
             if int(request.POST['form_step']) == context['form_step']:
                 context['related_form'] = forms.ContractForm(request.POST, params={
-                    'contracts': company.contract_set
+                    'contracts': company.contract_set.filter(archive=False)
                 })
 
                 if context['related_form'].is_valid():
@@ -47,7 +47,7 @@ class ContractView(View):
                         context.update(self.make_context(request, contract, periods))
             else:
                 context['related_form'] = forms.ContractForm(params={
-                    'contracts': company.contract_set
+                    'contracts': company.contract_set.filter(archive=False)
                 })
         return render(request, "contracts/contracts.html", context)
 
