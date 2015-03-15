@@ -8,7 +8,7 @@ __author__ = 'alex'
 
 
 class CompanyForm(forms.ModelForm):
-    status = forms.ChoiceField(label="Estado", choices=remotesyc.models.Ticket.STATUS.CHOICES)
+    status = forms.ChoiceField(label=u"Condição atual", choices=remotesyc.models.Ticket.STATUS.CHOICES, required=False)
 
     name = forms.ModelChoiceField(queryset=models.Company.objects.all(),
                                   empty_label='Selecione uma empresa',
