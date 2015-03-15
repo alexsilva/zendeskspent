@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.core.context_processors import csrf
 from django.shortcuts import render
 from django.views.generic import View
@@ -5,6 +6,7 @@ from django.views.generic import View
 import forms
 import models
 import remotesyc.models
+import utils
 
 
 class ContractView(View):
@@ -40,23 +42,43 @@ class ContractView(View):
                     })
 
                     if context['period_form'].is_valid():
-                        context['data'] = self.do_filter(request, contract, context['period_form'].cleaned_data['period'])
-                        context['contract'] = contract
+                        periods = context['period_form'].cleaned_data['period']
+                        periods = periods if len(periods) > 0 else contract.period_set.all()
+                        context.update(self.make_context(request, contract, periods))
             else:
                 context['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set
                 })
         return render(request, "contracts/contracts.html", context)
 
-    def do_filter(self, request, contract, periods):
+    @staticmethod
+    def make_context(request, contract, periods):
         tickets = remotesyc.models.Ticket.objects.filter(organization_id=contract.company.organization_external)
 
         if not request.POST['status'] == remotesyc.models.Ticket.STATUS.ALL:
             tickets = tickets.filter(status=request.POST['status'])
 
-        related = {}
-        periods = periods if len(periods) > 0 else contract.period_set.all()
-
+        extra_context = {
+            'contract': contract,
+            'intervals': {}
+        }
         for period in periods:
-            related[period] = tickets.filter(updated_at__range=[period.dt_start, period.dt_end])
-        return related
+            extra_context['intervals'][period] = tickets.filter(updated_at__range=[period.dt_start, period.dt_end])
+
+        # horas do total de tickets nos períodos selecionados
+        extra_context['spent_hours'] = utils.calc_spent_hours(contract, extra_context['intervals'].values())
+
+        if len(periods) == 1:
+            spent_credits = utils.calc_spent_credits(contract, periods[0])
+
+            # total de horas válidas
+            extra_context['valid_hours'] = contract.average_hours + spent_credits
+
+            # saldo devedor
+            extra_context['spent_credits'] = spent_credits
+
+            extra_context['remainder_hours'] = extra_context['valid_hours'] - extra_context['spent_hours']
+        else:
+            extra_context['remainder_hours'] = utils.calc_remainder_hours(contract, extra_context['spent_hours'])
+
+        return extra_context

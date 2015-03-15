@@ -41,7 +41,11 @@ class Contract(CommonBaseModel):
 
     @property
     def average_hours(self):
-        return self.hours / self.period_set.count()
+        try:
+            average = self.hours / self.period_set.count()
+        except ZeroDivisionError:
+            average = 0.0
+        return average
 
     class Meta(object):
         verbose_name = "Contrato"

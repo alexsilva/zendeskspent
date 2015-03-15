@@ -24,7 +24,7 @@
             });
             $('#form_results').DataTable({
                 data: [
-                    {% for date, objects in data.items %}
+                    {% for date, objects in intervals.items %}
                         {%  for object in objects %} {
                             id: "<a href='{{ object|resolve_id_url }}' target='_blank'>#{{ object.pk }}</a>",
                             date: "{{ date }}",
@@ -56,14 +56,14 @@
     <div class="container-fluid">
         <div class="container-fluid alert alert-info">
             <button id="btn_show_sync" class="btn btn-primary btn-sm">Sincronizar dados</button>
-            {% if data %}
+            {% if intervals %}
                 <span class="text-info">Total de horas: {{ contract.hours }}</span>
-                {% ifequal data|length 1 %}
+                {% ifequal intervals|length 1 %}
                     {# hora média do perído(único) selecionado. #}
-                    <span class="text-success"> | Horas do período: {{ contract.average_hours }}</span>
+                    <span class="text-success"> | Média por período: {{ contract.average_hours }}</span>
                 {% endifequal %}
-                <span class="text-warning"> | Horas gastas: {% calc_hours_spent contract data %}</span>
-                <span class="text-danger"> | Horas restantes: {% calc_hours_remainder contract data %}</span>
+                <span class="text-warning"> | Horas gastas: {{ spent_hours }}</span>
+                <span class="text-danger"> | Horas restantes: {{ remainder_hours }}</span>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">
@@ -108,20 +108,39 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-5 col-sm-offset-1">
-                {% if data %}
-                    <h4 class="text-info">Total de horas: {{ contract.hours }}</h4>
-                    {% ifequal data|length 1 %}
-                        {# hora média do perído(único) selecionado. #}
-                        <h4 class="text-success">Horas do período: {{ contract.average_hours }}</h4>
-                    {% endifequal %}
-                    <h4 class="text-warning">Horas gastas: {% calc_hours_spent contract data %}</h4>
-                    <h4 class="text-danger">Horas restantes: {% calc_hours_remainder contract data %}</h4>
+            <div class="col-md-5 col-sm-offset-1 table-container">
+                {% if intervals %}
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Total de horas</th>
+                                {% ifequal intervals|length 1 %}
+                                    <th>Média por período</th>
+                                    <th>Saldo devedor</th>
+                                    <th>Horas válidas</th>
+                                {% endifequal %}
+                                <th>Horas gastas</th>
+                                <th>Horas restantes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ contract.hours }}</td>
+                                {% ifequal intervals|length 1 %}
+                                    <td>{{ contract.average_hours }}</td>
+                                    <td>{{ spent_credits }}</td>
+                                    <td>{{ valid_hours }}</td>
+                                {% endifequal %}
+                                <td>{{ spent_hours }}</td>
+                                <td>{{ remainder_hours }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 {% endif %}
             </div>
         </div>
-        {% if data %}
-        <div id="results-container" class="container-fluid">
+        {% if intervals %}
+        <div class="container-fluid table-container">
             <table id="form_results" class="table table-striped table-bordered">
                 <thead>
                 <tr>
