@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.core.context_processors import csrf
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
 
@@ -24,6 +25,12 @@ class ContractView(View):
         if 'status' not in _post:  # Force default
             _post['status'] = remotesyc.models.Ticket.STATUS.CLOSED
         return _post
+
+    @staticmethod
+    def export_as(request, context, subtype):
+        response = HttpResponse('OK', content_type='text/' + subtype)
+        response['Content-Disposition'] = 'attachment; filename="{0}"'.format('file.' + subtype)
+        return response
 
     # noinspection DjangoOrm
     def post(self, request, *args, **kwargs):
@@ -57,6 +64,10 @@ class ContractView(View):
                 context['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set.filter(archive=False)
                 })
+
+        if '_export_as' in request.POST and request.POST['_export_as']:
+            return self.export_as(request, context, request.POST['_export_as'])
+
         return render(request, "contracts/contracts.html", context)
 
     @staticmethod

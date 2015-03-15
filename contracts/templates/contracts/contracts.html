@@ -47,6 +47,16 @@
                     {data: 'status'}
 	            ]
 	        });
+            $('#btn_export_csv').click(function() {
+                var form = $('#form-contracts');
+                var object = form.find("#_export_as");
+                object.attr('value', 'csv');
+                try {
+                    form.submit();
+                } finally {
+                    object.attr('value', null);
+                }
+            })
         })
     </script>
 {% endblock %}
@@ -65,10 +75,7 @@
                 <span class="text-{% if remainder_hours > 0 %}success{% else %}danger{% endif %}">
                     <span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}
                 </span>
-                <form method="post" class="action-controller">{% csrf_token %}
-                    <button id="btn_export_csv" class="btn btn-ctr btn-success btn-sm">Exportar csv</button>
-                    <input type="hidden" name="_export" value="csv">
-                </form>
+                <button id="btn_export_csv" class="btn btn-success btn-sm action-controller">Exportar csv</button>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">
@@ -110,6 +117,7 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-default">Enviar</button>
                         <input type="hidden" name="form_step" value="{{ form_step }}">
+                        <input type="hidden" name="_export_as" id='_export_as' value="">
                     </div>
                 </form>
             </div>
