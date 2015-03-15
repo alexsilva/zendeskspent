@@ -58,12 +58,11 @@
             <button id="btn_show_sync" class="btn btn-primary btn-sm">Sincronizar dados</button>
             {% if intervals %}
                 <span class="text-info">Total de horas: {{ contract.hours }}</span>
-                {% ifequal intervals|length 1 %}
-                    {# hora média do perído(único) selecionado. #}
-                    <span class="text-success"> | Média por período: {{ contract.average_hours }}</span>
+                {% ifequal intervals|length 1 %} {# hora média do perído(único) selecionado. #}
+                    <span class="text-success"><span class="text-divider">|</span>Média por período: {{ contract.average_hours }}</span>
                 {% endifequal %}
-                <span class="text-warning"> | Horas gastas: {{ spent_hours }}</span>
-                <span class="text-danger"> | Horas restantes: {{ remainder_hours }}</span>
+                <span class="text-warning"><span class="text-divider">|</span>Horas gastas: {{ spent_hours }}</span>
+                <span class="text-danger"><span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}</span>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">
