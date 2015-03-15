@@ -37,9 +37,12 @@ def calc_spent_credits(contract, period, status=remotesyc.models.Ticket.STATUS.C
     intervals = models.Period.objects.filter(contract=contract, dt_start__lt=period.dt_start)
     querysets = []
     for interval in intervals:
-        querysets.append(remotesyc.models.Ticket.objects.filter(
+        queryset = remotesyc.models.Ticket.objects.filter(
             organization_id=contract.company.organization_external,
-            updated_at__range=[interval.dt_start, interval.dt_end],
-            status=status
-        ))
+            updated_at__range=[interval.dt_start, interval.dt_end])
+
+        if not status == remotesyc.models.Ticket.STATUS.ALL:
+            queryset = queryset.filter(status=status)
+
+        querysets.append(queryset)
     return (contract.average_hours * intervals.count()) - calc_spent_hours(contract, querysets)
