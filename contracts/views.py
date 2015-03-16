@@ -32,7 +32,7 @@ class ContractView(View):
         return _post
 
     @staticmethod
-    def export_as(request, context, subtype):
+    def export_as_csv(request, context):
         stream = StringIO.StringIO()
         csv_writer = csv.writer(stream)
         csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
@@ -48,9 +48,8 @@ class ContractView(View):
                         row.append(getattr(utils, name)(context['contract'], item))
                 rows.append(row)
         csv_writer.writerows(rows)
-
-        response = HttpResponse(stream.getvalue(), content_type='text/' + subtype)
-        filename = "{0:s}[{1!s}].{2:s}".format(context['contract'].company, datetime.date.today(), subtype)
+        response = HttpResponse(stream.getvalue(), content_type='text/csv')
+        filename = "{0:s}[{1!s}].csv".format(context['contract'].company, datetime.date.today())
         response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(filename)
         return response
 
@@ -86,9 +85,8 @@ class ContractView(View):
                 context['related_form'] = forms.ContractForm(params={
                     'contracts': company.contract_set.filter(archive=False)
                 })
-
         if '_export_as' in request.POST and request.POST['_export_as']:
-            return self.export_as(request, context, request.POST['_export_as'])
+            return getattr(self, 'export_as_' + request.POST['_export_as'])(request, context)
 
         return render(request, "contracts/contracts.html", context)
 
