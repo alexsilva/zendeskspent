@@ -24,15 +24,16 @@
             });
             $('#form_results').DataTable({
                 data: [
-                    {% for date, objects in intervals.items %}
-                        {%  for object in objects %} {
-                            id: "<a href='{{ object|resolve_id_url }}' target='_blank'>#{{ object.pk }}</a>",
+                    {% for date, queryset in intervals.items %}
+                        {%  for obj in queryset %} {
+                            id: "<a href='{{ obj|resolve_id_url }}' target='_blank'>#{{ obj.pk }}</a>",
                             date: "{{ date }}",
-                            title: "{{ object.subject }}",
-                            created_at: "{{ object.created_at }}",
-                            updated_at: "{{ object.updated_at }}",
-                            hours: "{% load_spent_hours contract object %}",
-                            status: "{% resolve_status object %}"
+                            subject: "{{ obj.subject }}",
+                            created_at: "{{ obj.created_at }}",
+                            updated_at: "{{ obj.updated_at }}",
+                            spent_hours: "{% load_spent_hours contract obj %}",
+                            estimated_hours: "{% load_estimated_hours contract obj %}",
+                            status: "{% resolve_status obj %}"
                             },
                         {% endfor %}
                     {% endfor %}
@@ -40,10 +41,11 @@
 	            columns: [
 	                {data: 'id'},
                     {data: 'date'},
-	                {data: 'title'},
+	                {data: 'subject'},
 	                {data: 'created_at'},
 	                {data: 'updated_at'},
-	                {data: 'hours'},
+	                {data: 'spent_hours'},
+                    {data: 'estimated_hours'},
                     {data: 'status'}
 	            ]
 	        });
@@ -175,6 +177,7 @@
                     <th>Data Inicial</th>
                     <th>Data Final</th>
                     <th>Horas gastas</th>
+                    <th>Horas estimadas</th>
                     <th>Estado</th>
                 </tr>
                 </thead>
