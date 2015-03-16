@@ -30,8 +30,7 @@ def calc_spent_hours(contract, querysets):
     """Total de horas restantes para todo o período"""
     hours = []
     for queryset in querysets:
-        hours.append(sum([(float_number(ticket.get_field_value(contract.company.spent_hours_external)))
-                          for ticket in queryset]))
+        hours.append(sum([load_spent_hours(contract, ticket) for ticket in queryset]))
     return sum(hours)
 
 
