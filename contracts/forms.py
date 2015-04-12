@@ -15,6 +15,8 @@ class CompanyForm(forms.ModelForm):
                                   label='Empresas',
                                   required=True)
 
+    context_changed = forms.BooleanField(widget=forms.HiddenInput(attrs={'value': 0}), required=False)
+
     def __init__(self, *args, **kwargs):
         super(CompanyForm, self).__init__(*args, **kwargs)
         self.fields['status'].widget.attrs['class'] = 'form-control'

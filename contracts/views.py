@@ -64,8 +64,9 @@ class ContractView(View):
             company = models.Company.objects.get(pk=request.POST['name'])
 
             context['form_step'] = 2
+            context_changed = context['form'].cleaned_data['context_changed']
 
-            if int(request.POST['form_step']) == context['form_step']:
+            if int(request.POST['form_step']) == context['form_step'] and not context_changed:
                 context['related_form'] = forms.ContractForm(request.POST, params={
                     'contracts': company.contract_set.filter(archive=False)
                 })

@@ -17,9 +17,17 @@
 
     <script type="application/javascript">
         $(document).ready(function () {
-            $("#id_name, #id_contracts").change(function () {
+            var _name = $("#id_name").val();
+            var form = $('#form-contracts');
+
+            form.submit(function() {
+                var name = $("#id_name").val();
+                form.find("#id_context_changed").attr('value', (_name && name !== _name ? 1 : 0));
+            });
+
+            $("#id_name, #id_contracts").change(function() {
                 if ($(this).val()) {
-                    $('#form-contracts').submit();
+                    form.submit();
                 }
             });
             $('#form_results').DataTable({
@@ -50,7 +58,6 @@
 	            ]
 	        });
             $('#btn_export_csv').click(function() {
-                var form = $('#form-contracts');
                 var object = form.find("#_export_as");
                 object.attr('value', 'csv');
                 try {
@@ -120,6 +127,7 @@
                         <button type="submit" class="btn btn-default">Enviar</button>
                         <input type="hidden" name="form_step" value="{{ form_step }}">
                         <input type="hidden" name="_export_as" id='_export_as' value="">
+                        {{ form.context_changed }}
                     </div>
                 </form>
             </div>
