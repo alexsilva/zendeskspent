@@ -40,8 +40,8 @@
                             subject: "{{ obj.subject }}",
                             created_at: "{{ obj.created_at }}",
                             updated_at: "{{ obj.updated_at }}",
-                            spent_hours: "{% load_spent_hours contract obj %}",
                             estimated_hours: "{% load_estimated_hours contract obj %}",
+                            spent_hours: "{% load_spent_hours contract obj %}",
                             status: "{% resolve_status obj %}"
                             },
                         {% endfor %}
@@ -58,8 +58,8 @@
 	                {data: 'subject'},
 	                {data: 'created_at'},
 	                {data: 'updated_at'},
-	                {data: 'spent_hours'},
-                    {data: 'estimated_hours'},
+	                {data: 'estimated_hours'},
+                    {data: 'spent_hours'},
                     {data: 'status'}
 	            ]
 	        });
@@ -190,8 +190,8 @@
                     <th>Título</th>
                     <th>Data Inicial</th>
                     <th>Data Final</th>
-                    <th>Horas gastas</th>
                     <th>Horas estimadas</th>
+                    <th>Horas gastas</th>
                     <th>Estado</th>
                 </tr>
                 </thead>
