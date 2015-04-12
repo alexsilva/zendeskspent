@@ -75,14 +75,22 @@
                     {data: 'status'}
 	            ]
 	        });
-            $('#btn_export_csv').click(function() {
-                var object = form.find("#_export_as");
-                object.attr('value', 'csv');
+
+            function export_config_submit(object, format) {
+                object.attr('value', format);
                 try {
                     form.submit();
                 } finally {
                     object.attr('value', null);
                 }
+            }
+
+            $('#btn_export_csv').click(function() {
+                export_config_submit(form.find("#_export_as"), 'csv');
+            });
+
+            $('#btn_export_pdf').click(function() {
+                export_config_submit(form.find("#_export_as"), 'pdf');
             })
         })
     </script>
@@ -103,6 +111,7 @@
                     <span class="text-divider">|</span>Horas restantes: {{ remainder_hours }}
                 </span>
                 <button id="btn_export_csv" class="btn btn-success btn-sm action-controller">Exportar csv</button>
+                <button id="btn_export_pdf" class="btn btn-success btn-sm action-controller">Exportar pdf</button>
             {% endif %}
             <div id="sync_box"> <a class="sync_box_btn_close btn">X</a>
                 <div id="sync_box_info" class="alert alert-warning">

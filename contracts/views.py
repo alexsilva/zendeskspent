@@ -1,23 +1,37 @@
 # coding=utf-8
-from django.conf import settings
+import datetime
+import copy
+import csv
+import StringIO
 
+from django.utils import formats, dateformat
+
+from django.conf import settings
 from django.core.context_processors import csrf
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
-import datetime
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+
+
+styleSheet = getSampleStyleSheet()
 
 import forms
 import models
 import remotesyc.models
 import utils
-import copy
-import csv
-import StringIO
+
+
+def datetime_format(value):
+    fmt = formats.get_format("DATETIME_FORMAT", lang=settings.LANGUAGE_CODE)
+    return dateformat.format(value, fmt)
 
 
 class ContractView(View):
-
     def get(self, request, *args, **kwargs):
         return render(request, "contracts/contracts.html", {
             'form': forms.CompanyForm(),
@@ -32,25 +46,79 @@ class ContractView(View):
         return _post
 
     @staticmethod
-    def export_as_csv(request, context):
+    def get_filename(context, fmt):
+        dtstr = datetime.date.today().strftime('%d-%m-%Y')
+        return "{0[contract].company}_{1!s}.{2!s}".format(context, dtstr, fmt)
+
+    @staticmethod
+    def make_rows(context):
+        headers = [
+            'subject',
+            lambda c, o: datetime_format(o.created_at),
+            lambda c, o: datetime_format(o.updated_at),
+            utils.load_spent_hours,
+            utils.load_estimated_hours
+        ]
+        rows = []
+        for queryset in context['intervals'].values():
+            for obj in queryset:
+                row = []
+                for header in headers:
+                    if callable(header):
+                        row.append(header(context['contract'], obj))
+                    else:
+                        row.append(getattr(obj, header))
+                rows.append(row)
+        return rows
+
+    @classmethod
+    def export_as_pdf(cls, request, context):
+        # Create the HttpResponse object with the appropriate PDF headers.
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="{0!s}"'.format(cls.get_filename(context, 'pdf'))
+
+        # Create the PDF object, using the response object as its "file."
+        doc = SimpleDocTemplate(response, pagesize=landscape(A4), title='Relatório de horas')
+
+        rows = [settings.EXPORT_CSV_COLUMNS]
+        rows.extend(cls.make_rows(context))
+
+        store = [Paragraph('<para align=center spaceb=3>RELATÓRIO DE HORAS</para>', styleSheet["h3"]),
+                 Spacer(1, 0.5 * inch)]
+
+        table = Table(rows)
+        table.setStyle(
+            TableStyle([
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.gray),
+                ('GRID', (0, 0), (-1, 0), 0.25, colors.blue),
+                ('ALIGN', (1, 0), (-1, len(rows) - 1), 'CENTER')
+            ]))
+
+        store.append(table)
+        store.append(Spacer(1, 0.5 * inch))
+
+        resume = Table([
+            ['Total de horas', 'Horas gastas', 'Horas restantes'],
+            [context['contract'].hours, context['spent_hours'], context['remainder_hours']]
+        ])
+        resume.setStyle(
+            TableStyle([
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.gray),
+                ('LINEBELOW', (0, 0), (-1, 0), 0.20, colors.blue),
+                ('ALIGN', (0, 0), (-1, 1), 'CENTER')
+            ]))
+        store.append(resume)
+        doc.build(store)
+        return response
+
+    @classmethod
+    def export_as_csv(cls, request, context):
         stream = StringIO.StringIO()
         csv_writer = csv.writer(stream)
         csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
-        names = ['subject', 'created_at', 'updated_at', 'load_spent_hours', 'load_estimated_hours']
-        rows = []
-        for queryset in context['intervals'].values():
-            for item in queryset:
-                row = []
-                for name in names:
-                    if hasattr(item, name):
-                        row.append(getattr(item, name))
-                    else:
-                        row.append(getattr(utils, name)(context['contract'], item))
-                rows.append(row)
-        csv_writer.writerows(rows)
+        csv_writer.writerows(cls.make_rows(context))
         response = HttpResponse(stream.getvalue(), content_type='text/csv')
-        filename = "{0:s}[{1!s}].csv".format(context['contract'].company, datetime.date.today())
-        response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(filename)
+        response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(cls.get_filename(context, 'csv'))
         return response
 
     # noinspection DjangoOrm
