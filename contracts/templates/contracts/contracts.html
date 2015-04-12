@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load ticket_tags %}
+{% load date_formats %}
 
 {% block extrahead %}
     <link rel="stylesheet" type="text/css" href="{% static "contracts/css/isloading_overlay.css" %}">
@@ -11,6 +12,9 @@
 
     <script type="text/javascript" language="javascript" src="{% static "dataTable-1.10.6/js/jquery.dataTables.min.js" %}"></script>
     <script type="text/javascript" language="javascript" src="{% static "dataTable-1.10.6/js/dataTables.bootstrap.js" %}"></script>
+
+    <script type="text/javascript" language="javascript" src="{% static "dataTable-1.10.6/js/moment.min.js" %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static "dataTable-1.10.6/plugins/datetime-moment.js" %}"></script>
 
     <script type="text/javascript" language="javascript" src="{% static "contracts/js/jquery.bpopup.min.js" %}"></script>
     <script type="text/javascript" language="javascript" src="{% static "contracts/js/jquery.isloading.min.js" %}"></script>
@@ -31,6 +35,10 @@
                     form.submit();
                 }
             });
+
+            $.fn.dataTable.moment("{% get_format 'DATE_FORMAT' %}");
+            $.fn.dataTable.moment("{% get_format 'DATETIME_FORMAT' %}");
+
             $('#form_results').DataTable({
                 data: [
                     {% for date, queryset in intervals.items %}
