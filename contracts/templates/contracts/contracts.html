@@ -46,6 +46,7 @@
                         {% endfor %}
                     {% endfor %}
 	            ],
+                autoWidth: false,
 	            columns: [
 	                {data: 'id'},
                     {data: 'date'},
@@ -176,7 +177,7 @@
         </div>
         {% if intervals %}
         <div class="container-fluid table-container">
-            <table id="form_results" class="table table-striped table-bordered">
+            <table id="form_results" class="table table-striped table-bordered" cellspacing="5" width="100%">
                 <thead>
                 <tr>
                     <th>ID</th>
