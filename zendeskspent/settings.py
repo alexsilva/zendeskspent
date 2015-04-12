@@ -74,6 +74,7 @@ ROOT_URLCONF = 'zendeskspent.urls'
 
 WSGI_APPLICATION = 'zendeskspent.wsgi.application'
 
+FORMAT_MODULE_PATH = 'zendeskspent.locale'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -86,9 +87,6 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = env('LANGUAGE_CODE', default='en-us')
-
-DATETIME_FORMAT = env('DATETIME_FORMAT', default="d/m/Y H:i:s")
-DATE_FORMAT = env('DATE_FORMAT', default="d/m/Y")
 
 TIME_ZONE = 'UTC'
 
