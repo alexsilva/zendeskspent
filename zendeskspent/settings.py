@@ -92,9 +92,11 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
+
+DATE_FORMAT = "d/m/Y"
+
+DATETIME_FORMAT = "d/m/Y H:i"
 
 # up root
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), os.path.basename(BASE_DIR) + '_staticfiles')

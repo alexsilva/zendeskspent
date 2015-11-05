@@ -36,8 +36,9 @@
                 }
             });
 
-            $.fn.dataTable.moment("{% get_format 'DATE_FORMAT' %}");
-            $.fn.dataTable.moment("{% get_format 'DATETIME_FORMAT' %}");
+            $.fn.dataTable.moment("DD/MM/YYYY [até] DD/MM/YYYY");
+            $.fn.dataTable.moment("DD/MM/YYYY HH:mm");
+            $.fn.dataTable.moment("DD/MM/YYYY HH:mm");
 
             $('#form_results').DataTable({
                 data: [
