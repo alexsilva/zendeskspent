@@ -82,7 +82,11 @@ class ContractView(View):
         rows = [settings.EXPORT_CSV_COLUMNS]
         rows.extend(cls.make_rows(context))
 
-        store = [Paragraph('<para align=center spaceb=3>RELATÓRIO DE HORAS</para>', styleSheet["h3"]),
+        # Adiciona nome da empresa ao pdf
+        company_name = models.Company.objects.get(pk=request.POST['name']).name
+
+        store = [Paragraph('<para align=center spaceb=3>RELATÓRIO DE HORAS - '+company_name+'</para>',
+                           styleSheet["h3"]),
                  Spacer(1, 0.5 * inch)]
 
         table = Table(rows)
@@ -114,8 +118,16 @@ class ContractView(View):
     def export_as_csv(cls, request, context):
         stream = StringIO.StringIO()
         csv_writer = csv.writer(stream)
+
+        # Adiciona nome da empresa ao csv
+        company_name = models.Company.objects.get(pk=request.POST['name']).name
+        csv_writer.writerow(['RELATÓRIO DE HORAS - '+company_name])
         csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
         csv_writer.writerows(cls.make_rows(context))
+        csv_writer.writerows([
+            ['Total de horas', 'Horas gastas', 'Horas restantes'],
+            [context['contract'].hours, context['spent_hours'], context['remainder_hours']]
+        ])
         response = HttpResponse(stream.getvalue(), content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(cls.get_filename(context, 'csv'))
         return response
