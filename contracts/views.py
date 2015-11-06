@@ -54,7 +54,6 @@ class ContractView(View):
     def make_rows(context):
         headers = [
             'subject',
-            lambda c, o: datetime_format(o.created_at),
             lambda c, o: datetime_format(o.updated_at),
             utils.load_spent_hours,
             utils.load_estimated_hours
