@@ -30,6 +30,10 @@ def datetime_format(value):
     fmt = formats.get_format("DATETIME_FORMAT", lang=settings.LANGUAGE_CODE)
     return dateformat.format(value, fmt)
 
+def date_format(value):
+    fmt = formats.get_format("DATE_FORMAT", lang=settings.LANGUAGE_CODE)
+    return dateformat.format(value, fmt)
+
 
 class ContractView(View):
     def get(self, request, *args, **kwargs):
@@ -89,6 +93,14 @@ class ContractView(View):
                            styleSheet["h3"]),
                  Spacer(1, 0.5 * inch)]
 
+        # Adicionando periodo ao pdf, se selecionado
+        if 'period' in request.POST:
+            for pk in request.POST.getlist('period'):
+                period = models.Period.objects.get(pk=pk)
+                period_date = str(date_format(period.dt_start))+' - '+str(date_format(period.dt_end))
+                store.append(Paragraph('<para align=center spaceb=3>'+period_date+'</para>', styleSheet["h4"]))
+
+
         table = Table(rows)
         table.setStyle(
             TableStyle([
@@ -122,6 +134,14 @@ class ContractView(View):
         # Adiciona nome da empresa ao csv
         company_name = models.Company.objects.get(pk=request.POST['name']).name
         csv_writer.writerow(['RELATÓRIO DE HORAS - '+company_name])
+
+        # Adicionando periodo ao csv, se selecionado
+        if 'period' in request.POST:
+            for pk in request.POST.getlist('period'):
+                period = models.Period.objects.get(pk=pk)
+                period_date = [str(date_format(period.dt_start))+' - '+str(date_format(period.dt_end))]
+                csv_writer.writerow(period_date)
+
         csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
         csv_writer.writerows(cls.make_rows(context))
         csv_writer.writerows([
