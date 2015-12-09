@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import dateformat
 from django.utils import formats
+from remotesyc.models import BaseTicket
 
 
 class CommonBaseModel(models.Model):
@@ -73,3 +74,51 @@ class Period(CommonBaseModel):
         date_format = formats.get_format("DATE_FORMAT", lang=settings.LANGUAGE_CODE)
         return u"{0:s} até {1:s}".format(dateformat.format(self.dt_start, date_format),
                                          dateformat.format(self.dt_end, date_format))
+
+
+class EmailContractReport(models.Model):
+
+    PDF = 'pdf'
+    CSV = 'csv'
+    FILE_TYPE_CHOICES = ((PDF, 'PDF'), (CSV, 'CSV'))
+
+    email = models.EmailField(u'E-mail')
+    title_email = models.CharField(u'Título do e-mail', default=u'Relatório mensal de horas - Fábrica Digital',
+                                   max_length=255)
+    text_email = models.TextField(u'Mensagem', default=u'Relatório mensal de horas em anexo Fábrica Digital',
+                                  max_length=300)
+    day_report = models.PositiveIntegerField(u"Dia do relatório", help_text=u"Dia de envio do relatório em cada mês.",
+                                             default=1)
+    file_type = models.CharField(u'Formato do relatório', choices=FILE_TYPE_CHOICES,
+                                 default=PDF, max_length=10)
+    status = models.CharField(u'Status', help_text=u'Filtrar por status do ticket.', choices=BaseTicket.STATUS.CHOICES,
+                              default=BaseTicket.STATUS.ALL, max_length=120)
+    periods = models.ManyToManyField(Period, verbose_name=u'Períodos', help_text=u'Filtrar por períodos dos tickets.',
+                                     blank=True, null=True)
+    stop_sending = models.BooleanField(u'Para o envio de relatórios para esse e-mail', default=False)
+
+    contract = models.ForeignKey(Contract)
+
+    class Meta(object):
+        verbose_name = 'E-mail'
+        verbose_name_plural = u"E-mails dos relatórios"
+
+    def __unicode__(self):
+        return self.email
+
+
+class EmailReportLog(models.Model):
+    from_email = models.EmailField(u'De', null=False, blank=False)
+    to = models.EmailField(u'Para', null=False, blank=False)
+    subject = models.CharField(u'Título', max_length=150,  null=False, blank=False)
+    body = models.TextField(u'Mensagem', max_length=255, null=False, blank=False)
+    status = models.CharField(u'Status', max_length=20, null=False, blank=False)
+    periods = models.ManyToManyField(Period, verbose_name=u'Períodos', null=False, blank=False)
+    sent_at = models.DateTimeField(u'Enviado em', auto_now_add=True, null=False, blank=False)
+
+    class Meta(object):
+        verbose_name = u'Log de e-mail de relatório'
+        verbose_name_plural = u'Logs de e-mails de relatórios'
+
+    def __unicode__(self):
+        return self.to
