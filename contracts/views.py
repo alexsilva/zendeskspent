@@ -1,38 +1,20 @@
 # coding=utf-8
+from django.core.context_processors import csrf
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.generic import View
+from reportlab.lib.styles import getSampleStyleSheet
+from export import report_as_pdf, report_as_csv, get_filename
+
 import datetime
 import copy
-import csv
-import StringIO
-
-from django.utils import formats, dateformat
-
-from django.conf import settings
-from django.core.context_processors import csrf
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.views.generic import View
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4, landscape
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-
-
-styleSheet = getSampleStyleSheet()
-
 import forms
 import models
 import remotesyc.models
 import utils
 
 
-def datetime_format(value):
-    fmt = formats.get_format("DATETIME_FORMAT", lang=settings.LANGUAGE_CODE)
-    return dateformat.format(value, fmt)
-
-def date_format(value):
-    fmt = formats.get_format("DATE_FORMAT", lang=settings.LANGUAGE_CODE)
-    return dateformat.format(value, fmt)
+styleSheet = getSampleStyleSheet()
 
 
 class ContractView(View):
@@ -54,106 +36,42 @@ class ContractView(View):
         dtstr = datetime.date.today().strftime('%d-%m-%Y')
         return "{0[contract].company}_{1!s}.{2!s}".format(context, dtstr, fmt)
 
-    @staticmethod
-    def make_rows(context):
-        headers = [
-            'subject',
-            lambda c, o: datetime_format(o.updated_at),
-            utils.load_spent_hours,
-            utils.load_estimated_hours
-        ]
-        rows = []
-        for queryset in context['intervals'].values():
-            for obj in queryset:
-                row = []
-                for header in headers:
-                    if callable(header):
-                        row.append(header(context['contract'], obj))
-                    else:
-                        row.append(getattr(obj, header))
-                rows.append(row)
-        return rows
-
     @classmethod
-    def export_as_pdf(cls, request, context):
+    def export_as_pdf(cls, context):
+        contract = context['contract']
+        intervals = context['intervals']
+        spent_hours = context['spent_hours']
+        remainder_hours = context['remainder_hours']
+
         # Create the HttpResponse object with the appropriate PDF headers.
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="{0!s}"'.format(cls.get_filename(context, 'pdf'))
+        response['Content-Disposition'] = 'attachment; filename="{0!s}"'.format(
+            get_filename(contract.company.name, 'pdf')
+        )
+        response.write(report_as_pdf(contract, intervals, spent_hours, remainder_hours))
 
-        # Create the PDF object, using the response object as its "file."
-        doc = SimpleDocTemplate(response, pagesize=landscape(A4), title='Relatório de horas')
-
-        rows = [settings.EXPORT_CSV_COLUMNS]
-        rows.extend(cls.make_rows(context))
-
-        # Adiciona nome da empresa ao pdf
-        company_name = models.Company.objects.get(pk=request.POST['name']).name
-
-        store = [Paragraph('<para align=center spaceb=3>RELATÓRIO DE HORAS - '+company_name+'</para>',
-                           styleSheet["h3"]),
-                 Spacer(1, 0.5 * inch)]
-
-        # Adicionando periodo ao pdf, se selecionado
-        if 'period' in request.POST:
-            for pk in request.POST.getlist('period'):
-                period = models.Period.objects.get(pk=pk)
-                period_date = str(date_format(period.dt_start))+' - '+str(date_format(period.dt_end))
-                store.append(Paragraph('<para align=center spaceb=3>'+period_date+'</para>', styleSheet["h4"]))
-
-
-        table = Table(rows)
-        table.setStyle(
-            TableStyle([
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.gray),
-                ('GRID', (0, 0), (-1, 0), 0.25, colors.blue),
-                ('ALIGN', (1, 0), (-1, len(rows) - 1), 'CENTER')
-            ]))
-
-        store.append(table)
-        store.append(Spacer(1, 0.5 * inch))
-
-        resume = Table([
-            ['Total de horas', 'Horas gastas', 'Horas restantes'],
-            [context['contract'].hours, context['spent_hours'], context['remainder_hours']]
-        ])
-        resume.setStyle(
-            TableStyle([
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.gray),
-                ('LINEBELOW', (0, 0), (-1, 0), 0.20, colors.blue),
-                ('ALIGN', (0, 0), (-1, 1), 'CENTER')
-            ]))
-        store.append(resume)
-        doc.build(store)
         return response
 
     @classmethod
-    def export_as_csv(cls, request, context):
-        stream = StringIO.StringIO()
-        csv_writer = csv.writer(stream)
+    def export_as_csv(cls, context):
+        contract = context['contract']
+        intervals = context['intervals']
+        spent_hours = context['spent_hours']
+        remainder_hours = context['remainder_hours']
 
-        # Adiciona nome da empresa ao csv
-        company_name = models.Company.objects.get(pk=request.POST['name']).name
-        csv_writer.writerow(['RELATÓRIO DE HORAS - '+company_name])
+        # Create the HttpResponse object with the appropriate CSV headers.
+        response = HttpResponse(
+            report_as_csv(contract, intervals, spent_hours, remainder_hours),
+            content_type='text/csv'
+        )
+        response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(
+            get_filename(contract.company.name, 'csv')
+        )
 
-        # Adicionando periodo ao csv, se selecionado
-        if 'period' in request.POST:
-            for pk in request.POST.getlist('period'):
-                period = models.Period.objects.get(pk=pk)
-                period_date = [str(date_format(period.dt_start))+' - '+str(date_format(period.dt_end))]
-                csv_writer.writerow(period_date)
-
-        csv_writer.writerow(settings.EXPORT_CSV_COLUMNS)
-        csv_writer.writerows(cls.make_rows(context))
-        csv_writer.writerows([
-            ['Total de horas', 'Horas gastas', 'Horas restantes'],
-            [context['contract'].hours, context['spent_hours'], context['remainder_hours']]
-        ])
-        response = HttpResponse(stream.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="{0:s}"'.format(cls.get_filename(context, 'csv'))
         return response
 
     # noinspection DjangoOrm
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         context = {
             'form': forms.CompanyForm(self.post_changed(request)),
             'form_step': 1
@@ -186,7 +104,7 @@ class ContractView(View):
                     'contracts': company.contract_set.filter(archive=False)
                 })
         if '_export_as' in request.POST and request.POST['_export_as']:
-            return getattr(self, 'export_as_' + request.POST['_export_as'])(request, context)
+            return getattr(self, 'export_as_' + request.POST['_export_as'])(context)
 
         return render(request, "contracts/contracts.html", context)
 
