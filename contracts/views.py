@@ -171,7 +171,7 @@ class ContractView(View):
             'intervals': {}
         }
         for period in periods:
-            extra_context['intervals'][period] = tickets.filter(updated_at__range=[period.dt_start, period.dt_end])
+            extra_context['intervals'][period] = tickets.filter(created_at__range=[period.dt_start, period.dt_end])
 
         # horas do total de tickets nos períodos selecionados
         extra_context['spent_hours'] = utils.calc_spent_hours(contract, extra_context['intervals'].values())
